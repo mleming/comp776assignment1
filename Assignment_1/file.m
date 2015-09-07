@@ -1,0 +1,30 @@
+function [imfinal] = BayerPattern(input_image_file_name)
+im = imread(input_image_file_name);
+h_green = [0 0.25 0; 0.25 1 0.25; 0 0.25 0];
+h_red = [0.25 0.5 0.25; 0.5 1 0.5; 0.25 0.5 0.25];
+h_blue = [0.25 0.5 0.25; 0.5 1 0.5; 0.25 0.5 0.25];
+dims = size(im);
+length = dims(1);
+width = dims(2);
+green_filter = ones(2*floor(length/2) + 1, width);
+green_filter(1:2:end) = 0;
+green_filter = green_filter(1:length,1:width);
+red_filter = ones(2*floor(length/2) + 2,width);
+red_filter(2:2:end) = 0;
+red_filter = red_filter(1:2*floor(length/2) + 1,1:width);
+red_filter(2:2:end) = 0;
+red_filter = red_filter(1:length,1:width);
+blue_filter = ones(2*floor(length/2) + 2,width);
+blue_filter(1:2:end) = 0;
+blue_filter = blue_filter(1:2*floor(length/2) + 1,1:width);
+blue_filter(2:2:end) = 0;
+blue_filter = blue_filter(1:length,1:width);
+
+GC = uint8(green_filter).*im;
+RC = uint8(red_filter).*im;
+BC = uint8(blue_filter).*im;
+GC = imfilter(GC,h_green);
+RC = imfilter(RC,h_red);
+BC = imfilter(BC,h_blue);
+imfinal = cat(3, RC, GC, BC);
+return;
